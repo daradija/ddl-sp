@@ -1400,9 +1400,9 @@ class Parameters:
 			if i<n/2:
 				type="pursuit"
 			else:
-				# if random.random()<0.5:
-				# 	type="regression"
-				# else:
+				if random.random()<0.5:
+					type="regression"
+				else:
 					type="neural_network"
 			car=self.createRandomCar(type)
 			self.cars.append(car)
