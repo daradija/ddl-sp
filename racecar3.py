@@ -63,7 +63,7 @@ class Regressor:
 
 	def similar(self, a, b):
 		return min(a, b) /max(a, b)
-
+ 
 	def predict(self, xs,param):
 		"""
 		Predict the output based on input features using the regression model.
@@ -183,12 +183,12 @@ class NumbaNN:
 
 		weights = model.get_weights()
 
-		maxWidth=model.layers[0].input_shape[1]+1
+		maxWidth=model.layers[0].input.shape[1]+1
 		maxHeight=0
 		for layer in model.layers:
 			maxHeight+=1
-			if layer.input_shape[1]>maxWidth:
-				maxWidth=layer.input_shape[1]+1
+			if layer.input.shape[1]>maxWidth:
+				maxWidth=layer.input.shape[1]+1
 
 		self.h=maxHeight
 		self.w=maxHeight
@@ -206,8 +206,8 @@ class NumbaNN:
 				else:
 					self.weights[i//2][j][maxWidth-1]=w
 
-		self.dr.data("h","w","w","weights")
-		self.dr.data("w","data",param=["predict"])
+		#self.dr.data("h","w","w","weights")
+		#self.dr.data("w","data",param=["predict"])
 
 		# identifica si hay que hacer activación
 		self.activation=np.zeros(maxHeight,dtype=np.int8)
@@ -217,15 +217,15 @@ class NumbaNN:
 		for i,layer in enumerate(model.layers):
 			# print(f"Capa: {layer.name}")
 			# print(f"Tipo de capa: {layer.__class__.__name__}")
-			# print(f"Entradas: {layer.input_shape}")
-			self.lastWidh=layer.output_shape[1]
+			# print(f"Entradas: {layer.input.shape}")
+			self.lastWidh=layer.output.shape[1]
 			# print(f"Función de activación: {layer.activation if hasattr(layer, 'activation') else 'No tiene'}")
 			# # get function name:
 			# print(layer.activation.__name__)
 			self.activation[i]=code.index(layer.activation.__name__)
 			# print("\n")
-		self.dr.data("h","activation")
-		self.dr.function("predict2","w")
+		#self.dr.data("h","activation")
+		#self.dr.function("predict2","w")
 
 
 	def predict(self, xs): # version numpy
@@ -428,7 +428,7 @@ class NeuralNetwork:
 		# tf.random.set_seed(42)
 
 		model = Sequential()
-		model.add(Dense(100, input_dim=numxs, activation='sigmoid',dtype='float16'))
+		model.add(Dense(1000, input_dim=numxs, activation='sigmoid',dtype='float16'))
 		# model.add(Dense(7,dtype='float16'))
 		# model.add(Dense(7,dtype='float16'))
 		model.add(Dense(numys,dtype='float16'))
@@ -466,7 +466,7 @@ class NeuralNetwork:
 
 		from sklearn.model_selection import train_test_split
 		X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
-		model.fit(X_train, y_train, epochs=500, batch_size=5, verbose=1)
+		model.fit(X_train, y_train, epochs=50, batch_size=5, verbose=1)
 		loss = model.evaluate(X_test, y_test)
 		print(f'Pérdida en datos de prueba: {loss}')
 		# import tensorflow as tf
