@@ -5,6 +5,8 @@ from racecar3 import Parameters, execute
 import os
 import pickle
 import re
+import numpy as np
+import matplotlib.pyplot as plt
 
 class WorkerConfig:
 	def __init__(self, worker_id,gs):
@@ -93,31 +95,49 @@ class GeneticScheduler:
 			if name!="type":
 				self.study2(name,values)
 
-	def study2(self,name,values):
-		count=[0]*len(values)
-		sum=[0]*len(values)
+	def study2(self, name, values):
+		# Inicialización para "regression" y "neural_network"
+		count_regression = [0] * len(values)
+		sum_regression = [0] * len(values)
+		count_nn = [0] * len(values)
+		sum_nn = [0] * len(values)
+		
+		# Recorremos los experimentos y coches
 		for exp in self.experiments:
 			for car in exp.cars:
-				if car["type"]=="pursuit":
-					continue
-				i=values.index(car[name])
-				count[i]+=1
-				sum[i]+=car["rounds"]	
-		average=[0]*len(values)
-		for i in range(len(values)):
-			if count[i]>0:
-				average[i]=sum[i]/count[i]
-		# Graph
-		import matplotlib.pyplot as plt
-		plt.bar(values,average)
+					if car["type"] == "pursuit":
+						continue  # Saltar "pursuit"
+					
+					i = values.index(car[name])
+					if car["type"] == "regression":
+						count_regression[i] += 1
+						sum_regression[i] += car["rounds"]
+					elif car["type"] == "neural_network":
+						count_nn[i] += 1
+						sum_nn[i] += car["rounds"]
+
+		# Calcular los promedios para "regression" y "neural_network"
+		average_regression = [sum_regression[i] / count_regression[i] if count_regression[i] > 0 else 0 for i in range(len(values))]
+		average_nn = [sum_nn[i] / count_nn[i] if count_nn[i] > 0 else 0 for i in range(len(values))]
+		
+		# Gráfico de barras agrupadas
+		bar_width = 0.35
+		index = np.arange(len(values))
+
+		plt.bar(index, average_regression, bar_width, label='Regression', color='red')
+		plt.bar(index + bar_width, average_nn, bar_width, label='Neural Network', color='yellow')
+
+		# Etiquetas y leyenda
 		plt.xlabel(name)
 		plt.ylabel("Average rounds")
 		plt.title(f"Study of {name}")
+		plt.xticks(index + bar_width / 2, values)  # Centrar etiquetas
+		plt.legend()
+
 		plt.show()
 		time.sleep(1)
 		print()
 		
-	
 
 if __name__ == "__main__":
     GeneticScheduler("./exp2")

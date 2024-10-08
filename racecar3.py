@@ -426,16 +426,16 @@ class NeuralNetwork:
 
 		# np.random.seed(42)  
 		# tf.random.set_seed(42)
-
-		model = Sequential()
-		model.add(Dense(1000, input_dim=numxs, activation='sigmoid',dtype='float16'))
-		# model.add(Dense(7,dtype='float16'))
-		# model.add(Dense(7,dtype='float16'))
-		model.add(Dense(numys,dtype='float16'))
-		#model.compile("adam", loss='mean_squared_error', metrics=['accuracy'])
-		model.compile(optimizer=SGD(), loss='mean_squared_error')
-		#model.compile(optimizer=Adam(learning_rate=1e-4, clipvalue=1.0), loss='categorical_crossentropy', metrics=['accuracy'])
-		
+		with tf.device('/GPU:0'):
+			model = Sequential()
+			model.add(Dense(1000, input_dim=numxs, activation='sigmoid',dtype='float16'))
+			# model.add(Dense(7,dtype='float16'))
+			# model.add(Dense(7,dtype='float16'))
+			model.add(Dense(numys,dtype='float16'))
+			#model.compile("adam", loss='mean_squared_error', metrics=['accuracy'])
+			model.compile(optimizer=SGD(), loss='mean_squared_error')
+			#model.compile(optimizer=Adam(learning_rate=1e-4, clipvalue=1.0), loss='categorical_crossentropy', metrics=['accuracy'])
+			
 
 		self.model=model
 
