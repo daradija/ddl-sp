@@ -49,7 +49,7 @@ class GeneticScheduler:
 		self.path = path		
 
 		self.loadExperiments(path)
-		self.study()
+		#self.study()
 		
 		"""Scheduler que mantiene a los workers ocupados al 100%."""
 		pool = multiprocessing.Pool(processes=num_workers)
@@ -82,11 +82,11 @@ class GeneticScheduler:
 				while number>=len(self.experiments):
 					self.experiments.append(None)
 				self.experiments[number]=pickle.load(f)
-		experiments2=[]
-		for exp in self.experiments:
-			if exp!=None:
-				experiments2.append(exp)
-		self.experiments=experiments2
+		# experiments2=[]
+		# for exp in self.experiments:
+		# 	if exp!=None:
+		# 		experiments2.append(exp)
+		# self.experiments=experiments2
 
 	def study(self):
 		# Select variable to study
